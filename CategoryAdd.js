@@ -28,25 +28,40 @@ Form.addEventListener('submit', async function (stop) {
     let visible = document.getElementById("c-visible").checked
 
 
+    let imageUrl = null
+    let file = document.getElementById("c-image").files[0]
+
+
+  if (file) {
+        let fileName = Date.now() + "-" + file.name
+        let upload = await supabase.storage.from("product-images").upload(fileName, file)
+
+        if (upload.error) {
+            console.log(upload.error)
+        } else {
+            let urlResult = supabase.storage.from("product-images").getPublicUrl(fileName)
+            imageUrl = urlResult.data.publicUrl
+        }
+    }
+
+
 
 let result
+    let categoryAdd = {
+        name: Name,
+        description: Description,
+        is_visible: visible
+
+    }
+
+    if (imageUrl) {
+        categoryAdd.image_url = imageUrl
+    }
 
 if (ID) {
-        result = await supabase.from("categories").update({
-        name: Name,
-        description: Description,
-        is_visible: visible
-
-
-        
-    }).eq("id", ID)
+        result = await supabase.from("categories").update(categoryAdd).eq("id", ID)
 } else {
-        result = await supabase.from("categories").insert({
-        name: Name,
-        description: Description,
-        is_visible: visible
-
-    })
+        result = await supabase.from("categories").insert(categoryAdd)
 }
 
 

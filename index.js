@@ -19,6 +19,8 @@ Form.addEventListener('submit', async function (stop) {
 
     if (result.error) {
         document.getElementById("login-error").classList.remove("hidden")
+        console.log(result.error);
+        
         
     } else {
         if (result.data.user.email === "hamzasajjad2032009@gmail.com") {
